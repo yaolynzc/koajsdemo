@@ -1,0 +1,27 @@
+{
+  "name": "koajsdemo",
+  "version": "1.0.0",
+  "description": "demo app base on koajs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/yaolynzc/koajsdemo.git"
+  },
+  "keywords": [
+    "koajs"
+  ],
+  "author": "flame",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yaolynzc/koajsdemo/issues"
+  },
+  "homepage": "https://github.com/yaolynzc/koajsdemo#readme",
+  "dependencies": {
+    "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.3.0"
+  }
+}
