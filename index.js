@@ -1,101 +1,61 @@
+/**
+ * https://chenshenhai.github.io/koa2-note/note/upload/simple.html
+ */
+
 const Koa = require('koa')
-const fs = require('fs')
+const path = require('path')
+const content = require('./util/content')
+const mimes = require('./util/mimes')
+
+/************使用koa-static中间件 */
+const static = require('koa-static')
 const app = new Koa()
 
+// 静态资源目录对于相对入口文件index.js的路径
+const staticPath = './static'
+
+app.use(static(path.join(__dirname,staticPath)))
+
+app.use(async(ctx)=>{
+  ctx.body = 'hello world'
+})
+
+// // 解析资源类型
+// function parseMime(url){
+//   let extName = path.extname(url)
+//   extName = extName ? extName.slice(1) : 'unknown'
+
+//   return mimes[extName]
+// }
+
 // app.use(async(ctx)=>{
-//   ctx.body = 'hello koa2'
-// })
+//   // 静态资源目录在本地的绝对路径
+//   let fullStaticPath = path.join(__dirname,staticPath)
 
-// app.use(async (ctx)=>{
-//   let url = ctx.request.url
-//   ctx.body = url
-// })
+//   // 获取静态资源内容，有可能是文件内容，目录，或404
+//   let _content = await content(ctx,fullStaticPath)
+// console.log(_content)
+//   // 解析请求内容的类型
+//   let _mime = parseMime(ctx.url)
 
-
-
-/************自定义路由 */
-/**
- * 用Promise封装异步读取文件方法
- */
-// function render(page){
-//   return new Promise((resolve,reject) => {
-//     let viewUrl = `./view/${page}`
-//     fs.readFile(viewUrl,"binary",(err,data)=>{
-//       if(err){
-//         reject(err)
-//       }else{
-//         resolve(data)
-//       }
-//     })
-//   })
-// }
-
-/**
- * 根据URL获取HTML内容
- */
-// async function route(url){
-//   let view = '404.html'
-//   switch(url){
-//     case '/':
-//       view = 'index.html'
-//       break
-//     case '/index':
-//       view = 'index.html'
-//       break
-//     case '/todo':
-//       view = 'todo.html'
-//       break
-//     case '/404':
-//       view = '404.html'
-//       break
-//     default:
-//       break
+//   // 如果有对应的文件类型，就配置上下文的类型
+//   if(_mime){
+//     ctx.type = _mime
 //   }
-//   let html = await render(view)
-//   return html
-// }
 
-// app.use(async (ctx)=>{
-//   let url = ctx.request.url
-//   let html = await route(url)
-//   ctx.body = html
+//   // 输出静态资源内容
+//   if(_mime && _mime.indexOf('image/') >= 0){
+//     // 如果是图片，则用node原生res，输出二进制数据
+//     ctx.res.writeHead(200)
+//     ctx.res.write(_content,'binary')
+//     ctx.res.end()
+//   }else{
+//     // 其他则输出文本
+//     ctx.body = _content
+//   }
 // })
 
 
-/*******使用koa-router中间件 */
-/**npm install --save koa-router */
-const Router = require('koa-router')
-
-let home = new Router()
-// 子路由1
-home.get('/',async(ctx)=>{
-  let html = `
-    <ul>
-      <li><a href="/page/helloworld">/page/helloworld</a></li>
-      <li><a href="/page/404">/page/404</a></li>
-    </ul>
-  `
-  ctx.body = html
-})
-
-// 子路由2
-let page = new Router()
-page.get('/404',async(ctx)=>{
-  ctx.body = '404 page!'
-}).get('/helloworld',async(ctx)=>{
-  ctx.body = 'helloworld page!'
-})
-
-// 装载所有子路由
-let router = new Router()
-router.use('/',home.routes(),home.allowedMethods())
-router.use('/page',page.routes(),page.allowedMethods())
-
-// 加载路由中间件
-app.use(router.routes()).use(router.allowedMethods())
-
-// app.listen(3000)
-// console.log('[demo] start-quick is starting at port 3000')
 app.listen(3000,()=>{
-  console.log('[demo] start-quick is starting at port 3000')
+  console.log('[demo] static-server is starting at port 3000')
 })
